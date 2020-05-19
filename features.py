@@ -46,7 +46,7 @@ def updateExport(isResign, decisionArr, exportName):
 
 		# For some reason, the text for events only necessitates the team code and "label name": we only need
 		# Celtics, not Boston Celtics.
-		code = export['teams'][tid]['abbrev']
+		code = list(filter(lambda team: team['tid'] == tid, export['teams']))[0]['abbrev']
 		labelName = decision[1].split(" ")[-1]
 		
 		if (not isResign):
