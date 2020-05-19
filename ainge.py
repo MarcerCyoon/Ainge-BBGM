@@ -29,6 +29,7 @@ while True:
 	print("Edit Options:")
 	print("U. Type U to Update Export with FAs")
 	print("T. Type T to Eliminate Transaction / Event")
+	print("P: Type P to Print Current Standings")
 	print("H. Type H for Help")
 	choice = input().strip().upper()
 
@@ -64,6 +65,20 @@ while True:
 		features.deleteTransaction(eid, fileName)
 		break
 
+	elif (choice == "P"):
+		discord = input("If you are printing this for Discord, type 1. If not, type 0: ")
+
+		if int(discord):
+			useAts = bool(input("Type 1 if your Discord server has team roles. If not, type 0: "))
+			useEmojis = bool(input("Type 1 if your Discord server has team emojis. If not, type 0: "))
+
+			features.printStandings(fileName, useEmojis, useAts)
+
+		else:
+			features.printStandings(fileName)
+
+		break
+
 	elif (choice == "H"):
 		print("You can use Ainge-BBGM to update your export or eliminate a transaction at the current moment.\n")
 		print("Update Export: by typing U, you can choose to update your export with FA signings that were made.")
@@ -75,5 +90,7 @@ while True:
 		print("Eliminate Transaction: by typing T, you can choose to eliminate an accidental transaction that occurred,")
 		print("whether it be because of Ainge-BBGM or if you simply butterfingered a trade.")
 		print("All you must do is provide Ainge-BBGM with the information about the transaction.\n")
+		print("Print Standings: by typing P, Ainge-BBGM will print the current standings in the export for you.")
+		print("It will also ask you if you use a Discord server, and if so, if you have team roles and/or team emojis.\n")
 
 input("Press ENTER to exit")

@@ -106,3 +106,46 @@ def deleteTransaction(eid, exportName):
 	with open(newFile, "w") as file:
 		json.dump(export, file)
 		print("New Export Created.")
+
+# Print Current Standings in Export, with some additional features for Discord support
+def printStandings(exportName, useEmojis=False, useAts=False):
+	with open(exportName, "r", encoding="utf-8-sig") as file:
+		export = json.load(file)
+
+	teams = export['teams']
+	currentYearPhase = (export['meta']['phaseText']).upper()
+
+	eastArr = []
+	westArr = []
+
+	for team in teams:
+		teamName = team['region'].strip() + " " + team['name'].strip()
+		wins = team['seasons'][-1]['won']
+		losses = team['seasons'][-1]['lost']
+		win_per = wins / team['seasons'][-1]['gp']
+
+		if (team['cid'] == 0):
+			eastArr.append([teamName, wins, losses, win_per])
+		else:
+			westArr.append([teamName, wins, losses, win_per])
+
+	eastArr = sorted(eastArr, key=lambda i:i[3], reverse=True)
+	westArr = sorted(westArr, key=lambda i:i[3], reverse=True)
+
+	print("__**" + currentYearPhase + " STANDINGS **__")
+	print("**EASTERN CONFERENCE**")
+	for i in range(0, len(eastArr)):
+		standing = i + 1
+		emoji_text = ":" + list(filter(lambda team: (team['region'].strip() + " " + team['name'].strip() == eastArr[i][0]), export['teams']))[0]['name'].lower().replace(" ", "") + ": "
+		print("{}) {}{} {}{}-{}".format(standing, "@" if useAts else "", eastArr[i][0], emoji_text if useEmojis else "", eastArr[i][1], eastArr[i][2]))
+		if (i == 7):
+			print("")
+
+	print("")
+	print("**WESTERN CONFERENCE**")
+	for i in range(0, len(westArr)):
+		standing = i + 1
+		emoji_text = ":" + list(filter(lambda team: (team['region'].strip() + " " + team['name'].strip() == westArr[i][0]), export['teams']))[0]['name'].lower().replace(" ", "") + ": "
+		print("{}) {}{} {}{}-{}".format(standing, "@" if useAts else "", westArr[i][0], emoji_text if useEmojis else "", westArr[i][1], westArr[i][2]))
+		if (i == 7):
+			print("")
