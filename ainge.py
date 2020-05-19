@@ -67,7 +67,7 @@ while True:
 		print("The specified format is as follows: the columns must be Player Name, Team Signed With, Offer AAV, Offer Years")
 		print("in that order. Each player decision should be a row; keep in mind the program will skip row one, assuming")
 		print("that it will be used for headers.\n")
-		print("Eliminate Transaction: by typing T, you can choose to eliminate an accidetanl transaction that occurred,")
+		print("Eliminate Transaction: by typing T, you can choose to eliminate an accidental transaction that occurred,")
 		print("whether it be because of Ainge-BBGM or if you simply butterfingered a trade.")
 		print("All you must do is provide Ainge-BBGM with the information about the transaction.\n")
 

@@ -70,3 +70,5 @@ def updateExport(isResign, decisionArr, exportName):
 	with open("updated.json", "w") as file:
 		json.dump(export, file)
 		print("New Export Created.")
+
+def deleteTransaction(type, players, season, team, ):
