@@ -71,4 +71,34 @@ def updateExport(isResign, decisionArr, exportName):
 		json.dump(export, file)
 		print("New Export Created.")
 
-def deleteTransaction(type, players, season, team, ):
+def eventExists(eid, export):
+	try:
+		event = list(filter(lambda event: event['eid'] == int(eid), export['events']))[0]
+	except IndexError:
+		return 0
+
+	return 1
+
+
+def deleteTransaction(eid, exportName):
+	with open(exportName, "r", encoding="utf-8-sig") as file:
+		export = json.load(file)
+
+	if (eventExists(eid, export)):
+		event = list(filter(lambda event: event['eid'] == int(eid), export['events']))[0]
+	else:
+		print("No event with inputted EID exists!")
+		return 0
+
+	print("Removing following event: ")
+	print(event)
+
+	export['events'].remove(event)
+
+	# Fixing all the eids so there isn't a random gap
+	for i in range(int(eid), len(export['events'])):
+		export['events'][i]['eid'] = i
+
+	with open("updated.json", "w") as file:
+		json.dump(export, file)
+		print("New Export Created.")

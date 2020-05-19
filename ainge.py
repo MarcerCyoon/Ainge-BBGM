@@ -22,8 +22,10 @@ while True:
 		print("No such file exists!")
 		fileName = input("Please re-input your export's name (include .json): ")
 
+print("\n")
+
 while True:
-	print("\nCurrently modifying " + fileName + "...\n")
+	print("Currently modifying " + fileName + "...\n")
 	print("Edit Options:")
 	print("U. Type U to Update Export with FAs")
 	print("T. Type T to Eliminate Transaction / Event")
@@ -56,7 +58,10 @@ while True:
 		break
 
 	elif (choice == "T"):
-		print("TBA")
+		print("You can find the eid if you export the league and go to events.")
+		eid = input("Please tell us the Event ID (eid) of the transaction to be deleted: ")
+
+		features.deleteTransaction(eid, fileName)
 		break
 
 	elif (choice == "H"):
