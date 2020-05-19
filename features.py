@@ -67,7 +67,9 @@ def updateExport(isResign, decisionArr, exportName):
 
 		export['events'].append(event)
 
-	with open("updated.json", "w") as file:
+	newFile = exportName.replace(".json", "") + "_updated.json"
+
+	with open(newFile, "w") as file:
 		json.dump(export, file)
 		print("New Export Created.")
 
@@ -99,6 +101,8 @@ def deleteTransaction(eid, exportName):
 	for i in range(int(eid), len(export['events'])):
 		export['events'][i]['eid'] = i
 
-	with open("updated.json", "w") as file:
+	newFile = exportName.replace(".json", "") + "_updated.json"
+
+	with open(newFile, "w") as file:
 		json.dump(export, file)
 		print("New Export Created.")
