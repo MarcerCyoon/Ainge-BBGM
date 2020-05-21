@@ -41,11 +41,12 @@ while True:
 				print("Intializing export... \n")
 				with open(csvName.strip(), "r") as file:
 					reader = csv.reader(file)
+					next(reader)
 					decisionArr = []
 					i = 0
 
 					for row in reader:
-						decisionArr[i] = row
+						decisionArr.append(row)
 						i += 1
 				break
 			else:

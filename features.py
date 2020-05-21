@@ -24,7 +24,7 @@ def updateExport(isResign, decisionArr, exportName):
 		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == decision[0], export['players']))[0]
 		tid = teamDict[decision[1]]
 		player['tid'] = tid
-		player['contract']['amount'] = decision[2] * 1000
+		player['contract']['amount'] = float(decision[2]) * 1000
 
 		# If the current phase of the game is the "Regular Season" or the "Preseason",
 		# then signing a contract will include the current year.
@@ -32,10 +32,10 @@ def updateExport(isResign, decisionArr, exportName):
 		# However, if you sign Isaiah Thomas in a 1-year deal in the 2020 offseason, it will expire at
 		# the end of 2021. Thus, a distinction needs to be made depending on the current phase.
 		if (phase == "regular" or phase == "preseason"):
-			exp = decision[3] + currentYear - 1
+			exp = int(decision[3]) + currentYear - 1
 			player['contract']['exp'] = exp
 		else:
-			exp = decision[3] + currentYear
+			exp = int(decision[3]) + currentYear
 			player['contract']['exp'] = exp
 
 		# To fully emulate the way signings are worked in-game, we must also create a corresponding event
@@ -47,15 +47,15 @@ def updateExport(isResign, decisionArr, exportName):
 		# For some reason, the text for events only necessitates the team code and "label name": we only need
 		# Celtics, not Boston Celtics.
 		code = list(filter(lambda team: team['tid'] == tid, export['teams']))[0]['abbrev']
-		labelName = decision[1].split(" ")[-1]
+		labelName = list(filter(lambda team: team['tid'] == tid, export['teams']))[0]['name']
 		
 		if (not isResign):
 			event['type'] = 'reSigned'
-			event['text'] = "The <a href=\"/l/1/roster/{}/{}\">{}</a> re-signed <a href=\"/l/1/player/{}\">{}</a> for ${}M/year through {}.".format(code, currentYear, labelName, player['pid'], decision[0], "%0.2f" % decision[2], exp)
+			event['text'] = "The <a href=\"/l/1/roster/{}/{}\">{}</a> re-signed <a href=\"/l/1/player/{}\">{}</a> for ${}M/year through {}.".format(code, currentYear, labelName, player['pid'], decision[0], "%0.2f" % float(decision[2]), exp)
 
 		else:
 			event['type'] = 'freeAgent'
-			event['text'] = "The <a href=\"/l/1/roster/{}/{}\">{}</a> signed <a href=\"/l/1/player/{}\">{}</a> for ${}M/year through {}.".format(code, currentYear, labelName, player['pid'], decision[0], "%0.2f" % decision[2], exp)
+			event['text'] = "The <a href=\"/l/1/roster/{}/{}\">{}</a> signed <a href=\"/l/1/player/{}\">{}</a> for ${}M/year through {}.".format(code, currentYear, labelName, player['pid'], decision[0], "%0.2f" % float(decision[2]), exp)
 		
 		event['pids'] = [player['pid']]
 		event['tids'] = [tid]
@@ -80,7 +80,6 @@ def eventExists(eid, export):
 		return 0
 
 	return 1
-
 
 def deleteTransaction(eid, exportName):
 	with open(exportName, "r", encoding="utf-8-sig") as file:
