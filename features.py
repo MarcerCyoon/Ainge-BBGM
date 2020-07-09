@@ -77,6 +77,21 @@ def updateExport(isResign, decisionArr, exportName):
 
 		export['events'].append(event)
 
+		# We must also create a transaction dictionary for the player if it is not a re-signing.
+		if not int(isResign):
+			gamePhase = list(filter(lambda attribute: attribute['key'] == "phase", export['gameAttributes']))[0]['value']
+			transaction = {
+				"season": currentYear,
+				"phase": gamePhase,
+				"tid": tid,
+				"type": "freeAgent"
+			}
+			try:
+				player['transactions'].append(transaction)
+			except KeyError:
+				player['transactions'] = []
+				player['transactions'].append(transaction)
+
 	newFile = exportName.replace(".json", "") + "_updated.json"
 
 	with open(newFile, "w") as file:

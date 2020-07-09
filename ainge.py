@@ -39,7 +39,7 @@ while True:
 		while True:
 			if (fileExists(csvName)):
 				print("Intializing export... \n")
-				with open(csvName.strip(), "r") as file:
+				with open(csvName.strip(), "r", encoding="utf-8-sig") as file:
 					reader = csv.reader(file)
 					next(reader)
 					decisionArr = []
