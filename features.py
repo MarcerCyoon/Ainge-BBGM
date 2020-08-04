@@ -237,3 +237,45 @@ def pickupOptions(optionsArr, exportName):
 	with open(newFile, "w") as file:
 		json.dump(export, file)
 		print("New Export Created.")
+
+def updateFinances(financesArr, exportName):
+	print(financesArr)
+	with open(exportName, "r", encoding="utf-8-sig") as file:
+		export = json.load(file)
+
+	# Keeps track of teams that did finances
+	teamsWithFinances = []
+
+	# Rows go following — team name, coaching, health, facilities
+	for finances in financesArr:
+		team = list(filter(lambda team: team['region'] + " " + team['name'] == finances[0], export['teams']))[0]
+		teamsWithFinances.append(team['region'])
+
+		# Check if finances add up to 100.
+		if not (int(finances[1]) + int(finances[2]) + int(finances[3]) == 100):
+			print("Uh oh! {}'s finances do not add up to 100!".format(team['region']))
+			return
+
+		team['budget']['coaching']['amount'] = int(finances[1]) * 1000
+		team['budget']['health']['amount'] = int(finances[2]) * 1000
+		team['budget']['facilities']['amount'] = int(finances[3]) * 1000
+
+	for team in export['teams']:
+		if team['region'] not in teamsWithFinances:
+			team['budget']['coaching']['amount'] = 33000
+			team['budget']['health']['amount'] = 33000
+			team['budget']['facilities']['amount'] = 33000
+
+		# Delete keys to force them to auto-update and correct rank
+		del team['budget']['coaching']['rank']
+		del team['budget']['health']['rank']
+		del team['budget']['facilities']['rank']
+
+	newFile = exportName.replace(".json", "") + "_updated.json"
+
+	with open(newFile, "w") as file:
+		json.dump(export, file)
+		print("New Export Created.")
+		print("Remember to press 'Save Revenue and Expenses Settings' once on any team to get rank to display correctly!")
+
+ 

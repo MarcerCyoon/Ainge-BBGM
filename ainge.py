@@ -31,6 +31,7 @@ while True:
 	print("T. Type T to Eliminate Transaction / Event")
 	print("P: Type P to Print Current Standings")
 	print("O: Type O to Pick Up Options")
+	print("F: Type F to Update Finances")
 	print("H. Type H for Help")
 	choice = input().strip().upper()
 
@@ -103,6 +104,28 @@ while True:
 		features.pickupOptions(optionsArr, fileName)
 		break
 
+	elif (choice == "F"):
+		csvName = input("Please tell us the Option CSV's name (include .csv): ")
+
+		while True:
+			if (fileExists(csvName)):
+				print("Intializing export... \n")
+				with open(csvName.strip(), "r", encoding="utf-8-sig") as file:
+					reader = csv.reader(file)
+					next(reader)
+					financesArr = []
+
+					for row in reader:
+						financesArr.append(row)
+				break
+			else:
+				print("No such file exists!")
+				csvName = input("Please re-input the CSV's name (include .csv): ")
+
+		print("Beginning export update... \n")
+		features.updateFinances(financesArr, fileName)
+		break
+
 	elif (choice == "H"):
 		print("You can use Ainge-BBGM to update your export or eliminate a transaction at the current moment.\n")
 		print("Update Export: by typing U, you can choose to update your export with FA signings that were made.")
@@ -116,5 +139,13 @@ while True:
 		print("All you must do is provide Ainge-BBGM with the information about the transaction.\n")
 		print("Print Standings: by typing P, Ainge-BBGM will print the current standings in the export for you.")
 		print("It will also ask you if you use a Discord server, and if so, if you have team roles and/or team emojis.\n")
+		print("Pick Up Options: by typing O, you can have options specified in the CSV inputted into the export")
+		print("with fancy and unique transaction text that specifies that a TO or PO was picked up. The CSV must have")
+		print("a header row, and each following row must be as follows: player name, type of option (TO or PO).\n")
+		print("Update Finances: by typing F, you can have the finances in-game updated. The Exodus League implements")
+		print("finances into its league, and each team is granted a total of 100M to allocate into coaching, facilities,")
+		print("and health. Ainge-BBGM will check that teams follow this requirement and update all finances as specified")
+		print("in a CSV. All teams who fail to submit will get 33/33/33. The CSV must have a header row, and then be formatted")
+		print("as follows: team name, coaching budget, health budget, and then finances budget.")
 
 input("Press ENTER to exit")
