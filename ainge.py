@@ -30,6 +30,7 @@ while True:
 	print("U. Type U to Update Export with FAs")
 	print("T. Type T to Eliminate Transaction / Event")
 	print("P: Type P to Print Current Standings")
+	print("O: Type O to Pick Up Options")
 	print("H. Type H for Help")
 	choice = input().strip().upper()
 
@@ -78,6 +79,28 @@ while True:
 		else:
 			features.printStandings(fileName)
 
+		break
+
+	elif (choice == "O"):
+		csvName = input("Please tell us the Option CSV's name (include .csv): ")
+
+		while True:
+			if (fileExists(csvName)):
+				print("Intializing export... \n")
+				with open(csvName.strip(), "r", encoding="utf-8-sig") as file:
+					reader = csv.reader(file)
+					next(reader)
+					optionsArr = []
+
+					for row in reader:
+						optionsArr.append(row)
+				break
+			else:
+				print("No such file exists!")
+				csvName = input("Please re-input the CSV's name (include .csv): ")
+
+		print("Beginning export update... \n")
+		features.pickupOptions(optionsArr, fileName)
 		break
 
 	elif (choice == "H"):

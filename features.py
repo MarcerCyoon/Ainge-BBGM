@@ -21,7 +21,7 @@ def updateExport(isResign, decisionArr, exportName):
 	phase = text.split(" ")[1]
 
 	for decision in decisionArr:
-		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == decision[0], export['players']))[0]
+		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == decision[0], export['players']))[-1]
 		tid = teamDict[decision[1]]
 		player['tid'] = tid
 		player['contract']['amount'] = float(decision[2]) * 1000
@@ -173,3 +173,67 @@ def printStandings(exportName, useEmojis=False, useAts=False):
 		print("{}) {}{} {}{}-{}".format(standing, "@" if useAts else "", westArr[i][0], emoji_text if useEmojis else "", westArr[i][1], westArr[i][2]))
 		if (i == 7):
 			print("")
+
+
+# Pick up options based on a CSV of specified format.
+def pickupOptions(optionsArr, exportName):
+	print(optionsArr)
+	with open(exportName, "r", encoding="utf-8-sig") as file:
+		export = json.load(file)
+
+	# Generate dictionary of each team and their tids
+	teamDict = dict()
+	for team in export['teams']:
+			teamName = team['region'] + " " + team['name']
+			teamDict[teamName] = team['tid']
+
+	text = export['meta']['phaseText']
+	currentYear = int(text.split(" ")[0])
+	phase = text.split(" ")[1]
+
+	for option in optionsArr:
+		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == option[0], export['players']))[-1]
+		tid = teamDict[option[1]]
+		player['tid'] = tid
+		optionAmount = player['salaries'][-1]['amount']
+		# Options are always during re-signings / off-season
+		optionExp = currentYear + 1
+		player['contract']['amount'] = optionAmount
+		player['contract']['exp'] = optionExp
+		player['salaries'].append({'season': optionExp, 'amount': optionAmount})
+
+		# Time to instantiate the custom event.
+		event = dict()
+
+		# For some reason, the text for events only necessitates the team code and "label name": we only need
+		# Celtics, not Boston Celtics.
+		code = list(filter(lambda team: team['tid'] == tid, export['teams']))[0]['abbrev']
+		labelName = list(filter(lambda team: team['tid'] == tid, export['teams']))[0]['name']
+
+		event['type'] = 'reSigned'
+
+		if "Team Option" in option[2] or "TO" in option[2]:
+			event['text'] = "The <a href=\"/l/1/roster/{}/{}\">{}</a> picked up <a href=\"/l/1/player/{}\">{}</a>'s team option.".format(code, currentYear, labelName, player['pid'], option[0])
+
+		elif "Player Option" in option[2] or "PO" in option[2]:
+			event['text'] = "<a href=\"/l/1/player/{}\">{}</a> picked up their player option with the <a href=\"/l/1/roster/{}/{}\">{}</a>.".format(player['pid'], option[0], code, currentYear, labelName)
+
+		else:
+			print("Error!")
+			return
+
+		event['pids'] = [player['pid']]
+		event['tids'] = [tid]
+		event['season'] = currentYear
+		# The eid of the current event would have to be the next available eid.
+		# That would just be the current amount of events, as each event has a corresponding
+		# eid and they start at 0 instead of 1.
+		event['eid'] = len(export['events'])
+
+		export['events'].append(event)
+
+	newFile = exportName.replace(".json", "") + "_updated.json"
+
+	with open(newFile, "w") as file:
+		json.dump(export, file)
+		print("New Export Created.")
