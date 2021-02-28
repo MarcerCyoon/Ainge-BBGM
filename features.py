@@ -21,10 +21,21 @@ def updateExport(isResign, decisionArr, exportName):
 	phase = text.split(" ")[1]
 
 	for decision in decisionArr:
+		print(decision[0])
 		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == decision[0], export['players']))[-1]
 		tid = teamDict[decision[1]]
 		player['tid'] = tid
 		player['contract']['amount'] = float(decision[2]) * 1000
+
+		if "Player Option" in decision[4] or "PO" in decision[4]:
+			player['lastName'] += " (PO)"
+			# Do this line so that for players having no last name, there aren't two weird spaces
+			player['lastName'] = player['lastName'].strip()
+
+		elif "Team Option" in decision[4] or "TO" in decision[4]:
+			player['lastName'] += " (TO)"
+			# Do this line so that for players having no last name, there aren't two weird spaces
+			player['lastName'] = player['lastName'].strip()
 
 		# If the current phase of the game is the "Regular Season" or the "Preseason",
 		# then signing a contract will include the current year.
@@ -79,7 +90,7 @@ def updateExport(isResign, decisionArr, exportName):
 
 		# We must also create a transaction dictionary for the player if it is not a re-signing.
 		if not int(isResign):
-			gamePhase = list(filter(lambda attribute: attribute['key'] == "phase", export['gameAttributes']))[0]['value']
+			gamePhase =export['gameAttributes']['phase']
 			transaction = {
 				"season": currentYear,
 				"phase": gamePhase,
@@ -192,6 +203,7 @@ def pickupOptions(optionsArr, exportName):
 	phase = text.split(" ")[1]
 
 	for option in optionsArr:
+		print(option[0])
 		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == option[0], export['players']))[-1]
 		tid = teamDict[option[1]]
 		player['tid'] = tid
@@ -201,6 +213,12 @@ def pickupOptions(optionsArr, exportName):
 		player['contract']['amount'] = optionAmount
 		player['contract']['exp'] = optionExp
 		player['salaries'].append({'season': optionExp, 'amount': optionAmount})
+
+		if "(TO)" in player['lastName']:
+			player['lastName'] = player['lastName'].replace("(TO)", "")
+
+		elif "(PO)" in player['lastName']:
+			player['lastName'] = player['lastName'].replace("(PO)", "")
 
 		# Time to instantiate the custom event.
 		event = dict()
