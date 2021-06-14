@@ -21,7 +21,7 @@ def updateExport(isResign, decisionArr, exportName):
 
 	for decision in decisionArr:
 		print(decision[0])
-		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == decision[0], export['players']))[-1]
+		player = list(filter(lambda player: (player['firstName'].strip() + " " + player['lastName'].strip()) == decision[0] and player['tid'] == -1, export['players']))[-1]
 		tid = teamDict[decision[1]]
 		player['tid'] = tid
 		player['contract']['amount'] = float(decision[2]) * 1000
