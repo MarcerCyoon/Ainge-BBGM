@@ -16,9 +16,8 @@ def updateExport(isResign, decisionArr, exportName):
 			teamName = team['region'] + " " + team['name']
 			teamDict[teamName] = team['tid']
 
-	text = export['meta']['phaseText']
-	currentYear = int(text.split(" ")[0])
-	phase = text.split(" ")[1]
+	currentYear = export['gameAttributes']['season']
+	phase = export['gameAttributes']['phase']
 
 	for decision in decisionArr:
 		print(decision[0])
@@ -42,7 +41,7 @@ def updateExport(isResign, decisionArr, exportName):
 		# For example, if Isaiah Thomas signs a 1-year deal in 2020, it will expire at the end of 2020.
 		# However, if you sign Isaiah Thomas in a 1-year deal in the 2020 offseason, it will expire at
 		# the end of 2021. Thus, a distinction needs to be made depending on the current phase.
-		if (phase == "regular" or phase == "preseason"):
+		if (phase < 4):
 			firstYearOfContract = currentYear
 
 		else:
@@ -90,7 +89,7 @@ def updateExport(isResign, decisionArr, exportName):
 
 		# We must also create a transaction dictionary for the player if it is not a re-signing.
 		if not int(isResign):
-			gamePhase =export['gameAttributes']['phase']
+			gamePhase = export['gameAttributes']['phase']
 			transaction = {
 				"season": currentYear,
 				"phase": gamePhase,
@@ -148,7 +147,7 @@ def printStandings(exportName, useEmojis=False, useAts=False):
 		export = json.load(file)
 
 	teams = export['teams']
-	currentYearPhase = (export['meta']['phaseText']).upper()
+	currentYear = export['gameAttributes']['season']
 
 	eastArr = []
 	westArr = []
@@ -167,7 +166,7 @@ def printStandings(exportName, useEmojis=False, useAts=False):
 	eastArr = sorted(eastArr, key=lambda i:i[3], reverse=True)
 	westArr = sorted(westArr, key=lambda i:i[3], reverse=True)
 
-	print("__**" + currentYearPhase + " STANDINGS **__")
+	print("__**" + currentYear + " STANDINGS **__")
 	print("**EASTERN CONFERENCE**")
 	for i in range(0, len(eastArr)):
 		standing = i + 1
@@ -198,8 +197,7 @@ def pickupOptions(optionsArr, exportName):
 			teamName = team['region'] + " " + team['name']
 			teamDict[teamName] = team['tid']
 
-	text = export['meta']['phaseText']
-	currentYear = int(text.split(" ")[0])
+	currentYear = export['gameAttributes']['season']
 	phase = text.split(" ")[1]
 
 	for option in optionsArr:
