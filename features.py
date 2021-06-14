@@ -27,11 +27,13 @@ def updateExport(isResign, decisionArr, exportName):
 		player['contract']['amount'] = float(decision[2]) * 1000
 
 		if "Player Option" in decision[4] or "PO" in decision[4]:
+			player['lastName'] = player['lastName'].strip()
 			player['lastName'] += " (PO)"
 			# Do this line so that for players having no last name, there aren't two weird spaces
 			player['lastName'] = player['lastName'].strip()
 
 		elif "Team Option" in decision[4] or "TO" in decision[4]:
+			player['lastName'] = player['lastName'].strip()
 			player['lastName'] += " (TO)"
 			# Do this line so that for players having no last name, there aren't two weird spaces
 			player['lastName'] = player['lastName'].strip()
@@ -184,7 +186,6 @@ def printStandings(exportName, useEmojis=False, useAts=False):
 		if (i == 7):
 			print("")
 
-
 # Pick up options based on a CSV of specified format.
 def pickupOptions(optionsArr, exportName):
 	print(optionsArr)
@@ -217,6 +218,8 @@ def pickupOptions(optionsArr, exportName):
 
 		elif "(PO)" in player['lastName']:
 			player['lastName'] = player['lastName'].replace("(PO)", "")
+
+		player['lastName'] = player['lastName'].strip()
 
 		# Time to instantiate the custom event.
 		event = dict()
