@@ -199,7 +199,6 @@ def pickupOptions(optionsArr, exportName):
 			teamDict[teamName] = team['tid']
 
 	currentYear = export['gameAttributes']['season']
-	phase = text.split(" ")[1]
 
 	for option in optionsArr:
 		print(option[0])
